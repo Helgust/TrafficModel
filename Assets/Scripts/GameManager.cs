@@ -20,16 +20,16 @@ public class GameManager : MonoBehaviour
     public  int maxSpeed;
     public  int minInterval;
     public  int maxInterval;
-    private static int valueReducingSpeed;
-    private static int timeReducingSpeed;
+    public  int valueReducingSpeed;
+    public  int timeReducingSpeed;
 
     private static float intervalCounter;
     
     private static int roadCounter;
     private static int laneCounter;
 
-    public float lengthCar = 40;
-    public float heightCar = 40;
+    public float lengthCar;
+    public float heightCar;
 
     private static int parametersNumber = 6;
     private static int parametersCounter = 0;
@@ -66,10 +66,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        minSpeed = 5;
-        maxSpeed = 10;
+        minSpeed = 1;
+        maxSpeed = 2;
         roadCounter = 1;
         laneCounter = 1;
+        valueReducingSpeed = 5;
+        timeReducingSpeed = 5;
+        lengthCar = 2;
+        heightCar = 1;
         Begin();
     }
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.PlayerLoop;
 
 public class Car : MonoBehaviour
 {
@@ -10,7 +12,7 @@ public class Car : MonoBehaviour
     private Vector3 _initCoord;
     private float _length, _height;
     private float _initialSpeed, _currentSpeed;
-    private float _acceleration;
+    private float _acceleration, _resist;
     private bool _accidentHappened;
     private bool _inDelay;
     private float _timeInAccident;
@@ -18,23 +20,8 @@ public class Car : MonoBehaviour
     public bool clicked;
     private Color _color;
 
-    // public Car(int id, float length, float height, float coordX, float coordY, float initialSpeed)
-    // {
-    //     SetId(id);
-    //     SetLength(length);
-    //     SetHeight(height);
-    //     SetCoordX(coordX);
-    //     SetCoordY(coordY);
-    //     SetInitialSpeed(initialSpeed);
-    //     SetCurrentSpeed(initialSpeed);
-    //     SetAcceleration(0);
-    //     SetAccidentHappened(false);
-    //     SetInDelay(false);
-    //     SetTimeInAccident(0);
-    //     SetClicked(false);
-    //     SetColor(Color.green);
-    //     SetActualTimeReducingSpeed(0);
-    // }
+    private RaycastHit2D _hit;
+    private float brakeLow = -1;
 
     public void CarInit(int id, float length, float height, Vector3 initCoord, float initialSpeed)
     {
@@ -52,17 +39,41 @@ public class Car : MonoBehaviour
         SetColor(Color.green);
         SetActualTimeReducingSpeed(0);
     }
-    
-    
+
+    public void FixedUpdate()
+    {
+        //Length of the ray
+        float laserLength = 50f;
+
+        //Get the first object hit by the ray
+        _hit = Physics2D.Raycast(gameObject.transform.position + new Vector3(_length / 2f, 0, 0),
+            Vector2.right,
+            laserLength);
+
+        Debug.DrawRay(transform.position + new Vector3(_length / 2f, 0, 0), Vector2.right * laserLength, Color.red);
+    }
+
     public void OnMouseDown()
     {
         if (!IsClicked())
         {
-            Debug.Log("!23");
+            SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() + GameManager.instance.timeReducingSpeed);
+            if (GetCurrentSpeed() - GameManager.instance.valueReducingSpeed >= 0)
+            {
+                SetCurrentSpeed(GetCurrentSpeed() - GameManager.instance.valueReducingSpeed);
+            }
+            else
+            {
+                SetCurrentSpeed(0);
+            }
+
+            SetColor(Color.yellow);
+            SetAcceleration(0);
             SetClicked(true);
-            
+            SetInDelay(true);
         }
     }
+
 
     public void OnMouseUp()
     {
@@ -72,48 +83,102 @@ public class Car : MonoBehaviour
         }
     }
 
-
     public void Update()
     {
-        var o = gameObject;
-        o.transform.position = o.transform.position + new Vector3(_initialSpeed, 0, 0) * Time.deltaTime;
-        if (gameObject.transform.position.x > 100f)
+        UpdateSpeeds(Time.deltaTime);
+        Move(Time.deltaTime);
+        if (_inDelay)
         {
-            Destroy(gameObject);
+            if (GetActualTimeReducingSpeed() <= 0)
+            {
+                SetActualTimeReducingSpeed(0);
+                SetInDelay(false);
+            }
+
+            SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() - Time.deltaTime);
+        }
+
+        if (GetId() == 1)
+        {
+            Debug.Log(" Vel=" + GetCurrentSpeed() + " Acc=" + GetAcceleration() + " HitDistance=" + _hit.distance);
         }
     }
 
-
-    public void Move(float dt)
+    private void UpdateSpeeds(float dt)
     {
-        //changes the coordinate,speed and color of the car in accordinance with specified acceleration
+        if (_hit.collider != null)
+        {
+            //Debug.Log("Hitting: " + _hit.collider.tag + _hit.distance);
+            Car carNext = _hit.transform.gameObject.GetComponent<Car>();
+
+            if (GetId() != 0)
+            {
+                if (!IsAccidentHappened() && !IsInDelay()) {
+                    if (_hit.distance <= 3 * carNext.GetLength() && _hit.distance > carNext.GetLength()) {
+                        carNext.ReduceSpeed(-10, GetCurrentSpeed(), dt);
+                        return;
+                    }
+                }
+
+                if (carNext.GetCurrentSpeed() > 0)
+                {
+                    if (_hit.distance <= carNext.GetLength())
+                    {
+                        //isAccident(carFrontNumber, carNextNumber);
+                        return;
+                    }
+                }
+            }
+
+            if (!IsAccidentHappened() && !IsInDelay())
+            {
+                if (GetCurrentSpeed() < GetInitialSpeed())
+                {
+                    IncreaseSpeed(1, dt);
+                }
+            }
+        }
+        else
+        {
+            if (!IsAccidentHappened() && !IsInDelay())
+            {
+                if (GetCurrentSpeed() < GetInitialSpeed())
+                {
+                    IncreaseSpeed(1, dt);
+                }
+            }
+        }
+    }
+
+    private void Move(float dt)
+    {
         if (GetCurrentSpeed() + GetAcceleration() * dt >= 0)
         {
             if (IsAccidentHappened() && IsInDelay())
             {
-                _color = new Color(1.0f, 0.45f, 0.0f);
+                SetColor(new Color(255, 165, 0));
             }
             else if (IsAccidentHappened())
             {
-                _color = Color.red;
+                SetColor(Color.red);
             }
             else if (_inDelay)
             {
-                _color = Color.yellow;
+                SetColor(Color.yellow);
             }
             else
             {
                 if (GetCurrentSpeed() + GetAcceleration() * dt > GetCurrentSpeed())
                 {
-                    _color = Color.magenta;
+                    SetColor(Color.magenta);
                 }
-                else if (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed())
+                else if (Math.Abs(GetCurrentSpeed() + GetAcceleration() * dt - GetCurrentSpeed()) < 0.2f)
                 {
-                    _color = Color.green;
+                    SetColor(Color.green);
                 }
                 else if (GetCurrentSpeed() + GetAcceleration() * dt < GetCurrentSpeed())
                 {
-                    _color = Color.blue;
+                    SetColor(Color.blue);
                 }
             }
 
@@ -125,36 +190,14 @@ public class Car : MonoBehaviour
         }
 
         if (GetCurrentSpeed() * dt + GetAcceleration() * dt * dt / 2 >= 0)
-            ShiftCarForward(dt);
+            ShiftCarForward(Time.deltaTime);
     }
 
-    public void Check(bool mousePressed, float mouseX, float mouseY, float dspeed, int timeReducingSpeed)
+    private void ShiftCarForward(float dt)
     {
-        //checks whether the pushing of the mouse was on the car
-        if (mousePressed && !IsClicked())
-        {
-            if (mouseX <= GetCoord().x + GetLength() && mouseX >= GetCoord().x &&
-                mouseY <= GetCoord().y + GetHeight() && mouseY > GetCoord().y)
-            {
-                SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() + timeReducingSpeed);
-                if (GetCurrentSpeed() - dspeed >= 0)
-                {
-                    SetCurrentSpeed(GetCurrentSpeed() - dspeed);
-                }
-                else
-                {
-                    SetCurrentSpeed(0);
-                }
-
-                SetColor(Color.yellow);
-                SetAcceleration(0);
-                SetClicked(true);
-                SetInDelay(true);
-            }
-        }
-
-        if (!mousePressed && IsClicked())
-            SetClicked(false);
+        var o = gameObject;
+        var speed = (GetCurrentSpeed() * dt + GetAcceleration() * dt * dt / 2);
+        o.transform.position = o.transform.position + Vector3.right * speed;
     }
 
     public void ReduceSpeed(float acceleration, float speedFront, float dt)
@@ -185,11 +228,6 @@ public class Car : MonoBehaviour
         }
     }
 
-    private void ShiftCarForward(float dt)
-    {
-        float px = (float) 3.7938105; //pixels in one mm
-        //SetCoord(GetCoord().x + (GetCurrentSpeed() * dt + GetAcceleration() * dt * dt / 2) * px,0);
-    }
     //getters and setters
 
     public int GetId()
@@ -212,8 +250,6 @@ public class Car : MonoBehaviour
         this._initCoord = coord;
         gameObject.transform.position = coord;
     }
-    
-    
 
     public float GetLength()
     {
@@ -223,6 +259,10 @@ public class Car : MonoBehaviour
     private void SetLength(float length)
     {
         this._length = length;
+        gameObject.GetComponent<SpriteRenderer>().size =
+            new Vector2(length, gameObject.GetComponent<SpriteRenderer>().size.y);
+        gameObject.GetComponent<BoxCollider2D>().size =
+            new Vector2(length, gameObject.GetComponent<BoxCollider2D>().size.y);
     }
 
     public float GetHeight()
@@ -232,7 +272,10 @@ public class Car : MonoBehaviour
 
     private void SetHeight(float height)
     {
-        this._height = height;
+        gameObject.GetComponent<SpriteRenderer>().size =
+            new Vector2(gameObject.GetComponent<SpriteRenderer>().size.x, height);
+        gameObject.GetComponent<BoxCollider2D>().size =
+            new Vector2(gameObject.GetComponent<BoxCollider2D>().size.x, height);
     }
 
     public float GetInitialSpeed()
@@ -255,7 +298,7 @@ public class Car : MonoBehaviour
         this._currentSpeed = currentSpeed;
     }
 
-    private float GetAcceleration()
+    public float GetAcceleration()
     {
         return _acceleration;
     }
@@ -316,14 +359,15 @@ public class Car : MonoBehaviour
         this.clicked = clicked;
     }
 
+
     public Color GetColor()
     {
         return _color;
     }
 
-    private void SetColor(Color color)
+    private void SetColor(Color new_color)
     {
-        _color = color;
-        gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+        _color = new_color;
+        gameObject.GetComponent<SpriteRenderer>().color = new_color;
     }
 }
