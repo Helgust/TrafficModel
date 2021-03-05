@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,6 +41,10 @@ public class Car : MonoBehaviour
         SetActualTimeReducingSpeed(0);
     }
 
+    public void Start()
+    {
+    }
+
     public void FixedUpdate()
     {
         //Length of the ray
@@ -53,12 +58,54 @@ public class Car : MonoBehaviour
         Debug.DrawRay(transform.position + new Vector3(_length / 2f, 0, 0), Vector2.right * laserLength, Color.red);
     }
 
+    public void OnCollisionEnter2D(Collision2D other)
+    {
+        //other.transform.gameObject.GetComponent<Car>().SetAccidentHappened(true);
+        IsAccident();
+    }
+
+    private void IsAccident()
+    {
+        // Car carFront = getCar(carFrontN);
+        // Car carNext = getCar(carNextN);
+        // float avSpeed = carNext.getCurrentSpeed();
+        // int next = carNextN, front = carFrontN;
+        // int carsInAccident = 1;
+        // carNext.setAccidentHappened(true);
+        // carFront.setAccidentHappened(true);
+        // while (front >= 0 && carFront.isAccidentHappened() && (carFront.getCoordX() + carFront.getLength() / 2 - carNext.getCoordX() - carNext.getLength() / 2 <= carNext.getLength())) {
+        //     avSpeed += carFront.getCurrentSpeed();
+        //     next--;
+        //     front--;
+        //     carsInAccident++;
+        //     carNext = getCar(next);
+        //     if (front >= 0)
+        //         carFront = getCar(front);
+        // }
+        // avSpeed /= carsInAccident;
+        // next = carNextN;
+        // front = carFrontN;
+        // carNext = getCar(next);
+        // carFront = getCar(front);
+        // carNext.setCurrentSpeed(avSpeed);
+        // carNext.setAcceleration(getBrakeLow());
+        // while (front >= 0 && carFront.isAccidentHappened() && (carFront.getCoordX() + carFront.getLength() / 2 - carNext.getCoordX() - carNext.getLength() / 2 <= carNext.getLength())) {
+        //     carFront.setCurrentSpeed(avSpeed);
+        //     carFront.setAcceleration(getBrakeLow());
+        //     next--;
+        //     front--;
+        //     carNext = getCar(next);
+        //     if (front >= 0)
+        //         carFront = getCar(front);
+        // }
+    }
+
     public void OnMouseDown()
     {
         if (!IsClicked())
         {
             SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() + GameManager.instance.timeReducingSpeed);
-            if (GetCurrentSpeed() - GameManager.instance.valueReducingSpeed >= 0)
+            if (GetCurrentSpeed() - GameManager.instance.valueReducingSpeed >= 0f)
             {
                 SetCurrentSpeed(GetCurrentSpeed() - GameManager.instance.valueReducingSpeed);
             }
@@ -74,7 +121,6 @@ public class Car : MonoBehaviour
         }
     }
 
-
     public void OnMouseUp()
     {
         if (IsClicked())
@@ -86,7 +132,18 @@ public class Car : MonoBehaviour
     public void Update()
     {
         UpdateSpeeds(Time.deltaTime);
+        Check();
         Move(Time.deltaTime);
+
+        if (GetId() != 0)
+        {
+             Debug.Log("Ds=" + _hit.distance + " V=" + GetCurrentSpeed() + " Ac=" + GetAcceleration() + "isD=" +
+                       _accidentHappened);
+        }
+    }
+
+    private void Check()
+    {
         if (_inDelay)
         {
             if (GetActualTimeReducingSpeed() <= 0)
@@ -94,58 +151,51 @@ public class Car : MonoBehaviour
                 SetActualTimeReducingSpeed(0);
                 SetInDelay(false);
             }
-
-            SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() - Time.deltaTime);
+            else
+            {
+                SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() - Time.deltaTime);
+            }
         }
 
-        if (GetId() == 1)
-        {
-            Debug.Log(" Vel=" + GetCurrentSpeed() + " Acc=" + GetAcceleration() + " HitDistance=" + _hit.distance);
-        }
+        // if (_accidentHappened)
+        // {
+        //     if (GetCurrentSpeed() == 0)
+        //         SetAcceleration(0);
+        //     if (Mathf.Round(GetTimeInAccident()) >= GameManager.instance.timeReducingSpeed)
+        //     {
+        //         if ((GetId() == 0) || (GetId() > 0 && (_hit.distance > 3 * GetLength())))
+        //         {
+        //             SetAccidentHappened(false);
+        //             SetTimeInAccident(0);
+        //         }
+        //     }
+        //
+        //     SetTimeInAccident(GetTimeInAccident() + Time.deltaTime);
+        // }
     }
 
     private void UpdateSpeeds(float dt)
     {
         if (_hit.collider != null)
         {
-            //Debug.Log("Hitting: " + _hit.collider.tag + _hit.distance);
             Car carNext = _hit.transform.gameObject.GetComponent<Car>();
-
-            if (GetId() != 0)
-            {
-                if (!IsAccidentHappened() && !IsInDelay()) {
-                    if (_hit.distance <= 3 * carNext.GetLength() && _hit.distance > carNext.GetLength()) {
-                        carNext.ReduceSpeed(-10, GetCurrentSpeed(), dt);
-                        return;
-                    }
-                }
-
-                if (carNext.GetCurrentSpeed() > 0)
-                {
-                    if (_hit.distance <= carNext.GetLength())
-                    {
-                        //isAccident(carFrontNumber, carNextNumber);
-                        return;
-                    }
-                }
-            }
-
+            
             if (!IsAccidentHappened() && !IsInDelay())
             {
-                if (GetCurrentSpeed() < GetInitialSpeed())
+                if (_hit.distance <= 3 * carNext.GetLength() && _hit.distance > carNext.GetLength())
                 {
-                    IncreaseSpeed(1, dt);
+                    //Debug.Log("Dist="+_hit.distance + " NxtLen="+carNext.GetLength());
+                    ReduceSpeed(-3, carNext.GetCurrentSpeed(), dt);
+                    return;
                 }
             }
         }
-        else
+
+        if (!IsAccidentHappened() && !IsInDelay())
         {
-            if (!IsAccidentHappened() && !IsInDelay())
+            if (GetCurrentSpeed() < GetInitialSpeed())
             {
-                if (GetCurrentSpeed() < GetInitialSpeed())
-                {
-                    IncreaseSpeed(1, dt);
-                }
+                IncreaseSpeed(2, dt);
             }
         }
     }
@@ -172,7 +222,11 @@ public class Car : MonoBehaviour
                 {
                     SetColor(Color.magenta);
                 }
-                else if (Math.Abs(GetCurrentSpeed() + GetAcceleration() * dt - GetCurrentSpeed()) < 0.2f)
+                else if ((GetCurrentSpeed() == 0) && (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed()) && !IsAccidentHappened() &&!IsInDelay())
+                {
+                    SetColor(Color.black);
+                }
+                else if (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed())
                 {
                     SetColor(Color.green);
                 }
@@ -180,6 +234,7 @@ public class Car : MonoBehaviour
                 {
                     SetColor(Color.blue);
                 }
+                
             }
 
             SetCurrentSpeed(GetCurrentSpeed() + GetAcceleration() * dt);

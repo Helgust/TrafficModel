@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         maxSpeed = 2;
         roadCounter = 1;
         laneCounter = 1;
-        valueReducingSpeed = 5;
+        valueReducingSpeed = 1;
         timeReducingSpeed = 5;
         lengthCar = 2;
         heightCar = 1;

@@ -91,7 +91,7 @@ public class Lane : MonoBehaviour
         }
         else
         {
-            if ((carList[listLen - 1].transform.position - startPos).x > 10f && carList.Count != 2)
+            if ((carList[listLen - 1].transform.position - startPos).x > 10f && carList.Count !=2)
             {
                 //Debug.Log("LastCarPosX"+carList[listLen - 1].transform.position.x+" Diff="+(carList[listLen - 1].transform.position - startPos).x + " carlistCount="+carList.Count);
                 CreateCar();
