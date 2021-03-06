@@ -74,7 +74,7 @@ public class Lane : MonoBehaviour
         GameObject car = Instantiate(GameManager.instance.toInstantiateCar, new Vector3(-100f, 0f, 0f),
             Quaternion.identity);
         car.GetComponent<Car>().CarInit(carList.Count, GameManager.instance.lengthCar, GameManager.instance.heightCar,
-            new Vector3(-GameManager.instance.ScreenAdjust / 2f, 0f, 0f), 3f);
+            new Vector3(-GameManager.instance.ScreenAdjust / 2f, 0f, 0f), 6f);
         //GameManager.getRnd.Next(GameManager.instance.minSpeed, GameManager.instance.maxSpeed)
         car.transform.SetParent(gameObject.transform);
         car.SetActive(true);
@@ -91,7 +91,7 @@ public class Lane : MonoBehaviour
         }
         else
         {
-            if ((carList[listLen - 1].transform.position - startPos).x > 10f && carList.Count !=2)
+            if ((carList[listLen - 1].transform.position - startPos).x > 10f && carList.Count!=3)
             {
                 //Debug.Log("LastCarPosX"+carList[listLen - 1].transform.position.x+" Diff="+(carList[listLen - 1].transform.position - startPos).x + " carlistCount="+carList.Count);
                 CreateCar();
