@@ -69,7 +69,7 @@ public class Road : MonoBehaviour
     private void SetLaneCount(int count)
     {
         this._laneCount = count;
-        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(GameManager.instance.ScreenAdjust, _laneCount*2);
+        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(Screen.width*2f, _laneCount*60);
     }
     
     private int GetLaneCount()

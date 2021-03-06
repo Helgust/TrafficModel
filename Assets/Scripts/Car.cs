@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 public class Car : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class Car : MonoBehaviour
     private bool _inDelay;
     private float _timeInAccident;
     private float _actualTimeReducingSpeed;
+    public Text carText;
     public bool clicked;
     private Color _color;
 
@@ -45,6 +48,7 @@ public class Car : MonoBehaviour
     public void Start()
     {
         count = 0;
+        gameObject.GetComponentInChildren<Canvas>().sortingOrder = 5;
     }
 
     public void FixedUpdate()
@@ -100,9 +104,13 @@ public class Car : MonoBehaviour
 
     public void Update()
     {
-        UpdateSpeeds(Time.deltaTime);
-        Check();
-        Move(Time.deltaTime);
+        if (!GameManager.instance.isPause)
+        {
+            carText.text = Math.Round(GetCurrentSpeed()).ToString(CultureInfo.InvariantCulture);
+            UpdateSpeeds(Time.deltaTime);
+            Check();
+            Move(Time.deltaTime);
+        }
     }
 
     private void Check()
@@ -130,7 +138,7 @@ public class Car : MonoBehaviour
             if (Mathf.Round(GetTimeInAccident()) >= GameManager.instance.timeReducingSpeed)
             {
                 if ((GetId() == 0) || (GetId() > 0 &&
-                                       (_hit.distance > 3f * GetLength())))
+                                       (_hit.distance > GetLength())))
                 {
                     SetAccidentHappened(false);
                     SetTimeInAccident(0);
@@ -149,24 +157,19 @@ public class Car : MonoBehaviour
 
             if (!carNext.IsAccidentHappened() || !carNext.IsInDelay())
             {
-                if (_hit.distance <= 3 * carNext.GetLength() && _hit.distance > GetLength())
+                if (_hit.distance <= 3 * carNext.GetLength())
                 {
-                    ReduceSpeed(-6,Time.deltaTime);
+                    ReduceSpeed(-2,Time.deltaTime);
                     return;
                 }
-
-                // if (_hit.distance <= carNext.GetLength())
-                // {
-                //     ReduceSpeed(-,Time.deltaTime);
-                //     return;
-                // }
+                
             }
 
             if (!carNext.IsAccidentHappened())
             {
                 if (GetCurrentSpeed() < GetInitialSpeed())
                 {
-                    IncreaseSpeed(1, dt);
+                    IncreaseSpeed(3, dt);
                 }
             }
         }
@@ -175,18 +178,13 @@ public class Car : MonoBehaviour
         {
             if (GetCurrentSpeed() < GetInitialSpeed())
             {
-                IncreaseSpeed(1, dt);
+                IncreaseSpeed(3, dt);
             }
         }
     }
 
     private void Move(float dt)
     {
-        if (GetId() == 1)
-        {
-            Debug.Log("Dist=" + _hit.distance);
-        }
-            
         if (GetCurrentSpeed() + GetAcceleration() * dt >= 0)
         {
             if (IsAccidentHappened() && IsInDelay())
