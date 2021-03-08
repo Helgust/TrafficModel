@@ -27,6 +27,7 @@ public class Car : MonoBehaviour
     private RaycastHit2D _hit;
     private float brakeLow = -1;
     private int count;
+    private int coef = 10;
 
     public void CarInit(int id, float length, float height, Vector3 initCoord, float initialSpeed)
     {
@@ -54,7 +55,7 @@ public class Car : MonoBehaviour
     public void FixedUpdate()
     {
         //Length of the ray
-        float laserLength = 50f;
+        float laserLength = Mathf.Infinity;
 
         //Get the first object hit by the ray
         _hit = Physics2D.Raycast(gameObject.transform.position, //+ new Vector3(_length / 2f, 0, 0),
@@ -106,7 +107,11 @@ public class Car : MonoBehaviour
     {
         if (!GameManager.instance.isPause)
         {
-            carText.text = Math.Round(GetCurrentSpeed()).ToString(CultureInfo.InvariantCulture);
+            if (GetId() == 1)
+            {
+                Debug.Log("Dist" + _hit.distance);
+            }
+            carText.text = Math.Round(GetCurrentSpeed()/10).ToString(CultureInfo.InvariantCulture);
             UpdateSpeeds(Time.deltaTime);
             Check();
             Move(Time.deltaTime);
@@ -159,7 +164,7 @@ public class Car : MonoBehaviour
             {
                 if (_hit.distance <= 3 * carNext.GetLength())
                 {
-                    ReduceSpeed(-2,Time.deltaTime);
+                    ReduceSpeed(-10*GameManager.instance.coef,Time.deltaTime);
                     return;
                 }
                 
@@ -169,7 +174,7 @@ public class Car : MonoBehaviour
             {
                 if (GetCurrentSpeed() < GetInitialSpeed())
                 {
-                    IncreaseSpeed(3, dt);
+                    IncreaseSpeed(10*GameManager.instance.coef, dt);
                 }
             }
         }
@@ -178,7 +183,7 @@ public class Car : MonoBehaviour
         {
             if (GetCurrentSpeed() < GetInitialSpeed())
             {
-                IncreaseSpeed(3, dt);
+                IncreaseSpeed(10*GameManager.instance.coef, dt);
             }
         }
     }
@@ -315,6 +320,7 @@ public class Car : MonoBehaviour
             new Vector2(gameObject.GetComponent<SpriteRenderer>().size.x, height);
         gameObject.GetComponent<BoxCollider2D>().size =
             new Vector2(gameObject.GetComponent<BoxCollider2D>().size.x, height);
+        carText.fontSize = (int)height -4;
     }
 
     public float GetInitialSpeed()
@@ -324,7 +330,7 @@ public class Car : MonoBehaviour
 
     private void SetInitialSpeed(float initialSpeed)
     {
-        this._initialSpeed = initialSpeed;
+        this._initialSpeed = initialSpeed*GameManager.instance.coef;
     }
 
     public float GetCurrentSpeed()

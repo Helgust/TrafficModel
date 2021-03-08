@@ -24,14 +24,17 @@ public class GameManager : MonoBehaviour
     public int valueReducingSpeed;
     public int timeReducingSpeed;
 
-    private  int roadCounter;
-    private  int laneCounter;
+    private int roadCounter;
+    private int laneCounter;
 
+
+    public int coef = 10;
     public bool isStart;
     public bool isPause;
     public float lengthCar;
     public float heightCar;
     public int counter;
+
     public static System.Random getRnd = new System.Random();
     // Start is called before the first frame update
 
@@ -89,7 +92,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (isStart)
         {
             counter++;
@@ -106,6 +108,18 @@ public class GameManager : MonoBehaviour
                 Destroy(R);
             }
         }
+    }
 
+    public void preesExit()
+    {
+        if (roadList.Count != 0)
+        {
+            foreach (var VARIABLE in roadList)
+            {
+                Destroy(VARIABLE);
+            }
+        }
+
+        Application.Quit();
     }
 }

@@ -18,26 +18,7 @@ public class Lane : MonoBehaviour
     {
         timerReached = false;
         intervalTimer = GameManager.getRnd.Next(GameManager.instance.minInterval, GameManager.instance.maxInterval);
-        foreach (var currentCar in carList)
-        {
-            // Car carSript = currentCar.GetComponent<Car>();
-            // if (carSript.IsInDelay())
-            // {
-            //     if (carSript.GetActualTimeReducingSpeed() <= 0)
-            //     {
-            //         carSript.SetActualTimeReducingSpeed(0);
-            //         carSript.SetInDelay(false);
-            //     }
-            //
-            //     carSript.SetActualTimeReducingSpeed(carSript.GetActualTimeReducingSpeed() - Time.deltaTime);
-            // }
-
-            if (currentCar.transform.position.x > 20f)
-            {
-                carList.Remove(currentCar);
-                Destroy(currentCar);
-            }
-        }
+        
     }
 
 
@@ -82,7 +63,7 @@ public class Lane : MonoBehaviour
     private void SetCoord(Vector3 coord)
     {
         this._initCoord = coord;
-        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(Screen.width*2f, 60f);
+        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(Screen.width, 60f);
     }
 
     public void LaneInit(int id, Vector3 initCoord)

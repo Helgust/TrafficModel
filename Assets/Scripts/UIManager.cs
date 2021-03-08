@@ -17,9 +17,12 @@ public class UIManager : MonoBehaviour
     public InputField deltaVReduce;
     public InputField deltaTReduce;
 
+    private string errStr = String.Empty;
+    private bool errFalg;
 
     private void Awake()
     {
+        errFalg = false;
         if (instance == null)
         {
             instance = this;
@@ -43,13 +46,23 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (errFalg)
+        {
+            errorWindow.SetActive(true);
+            errorWindow.GetComponentInChildren<Text>().text = errStr;
+        }
+        else
+        {
+            errorWindow.SetActive(false);
+            errStr = String.Empty;
+        }
     }
 
     public void pressStart()
     {
         if (!GameManager.instance.isStart)
         {
-            if(GetDataFromUI())
+            if (GetDataFromUI())
             {
                 GameManager.instance.isStart = true;
                 StartButtonText.text = "НОВЫЙ СТАРТ";
@@ -96,63 +109,90 @@ public class UIManager : MonoBehaviour
             if (_minSpeed > _maxSpeed)
             {
                 //todo error minV>maxV
-                return false;
-            }
-            if (_minInterval > _maxInterval)
-            {
-                //todo error minInter>maxInter
-                return false;
-            }
-            if (_minSpeed > _maxSpeed)
-            {
-                //todo error minV>maxV
+                errFalg = true;
+                errStr = "Ошибка: минимальная скорость не может быть больше максимальной";
                 return false;
             }
 
-            if ( _minSpeed == 0 )
+            if (_minInterval > _maxInterval)
             {
-            // param is Zero
-            return false;
+                //todo error minInter>maxInter
+                errFalg = true;
+                errStr = "Ошибка: минимальный интервал не может быть больше максимального";
+                return false;
             }
-            if ( _maxSpeed == 0 )
+
+            if (_minSpeed == 0)
             {
-            // param is Zero
-            return false;
+                errFalg = true;
+                errStr = "Ошибка: минимальная скорость равна 0";
+                // param is Zero
+                return false;
             }
-            if ( _minInterval == 0 )
+
+            if (_maxSpeed == 0)
             {
-            // param is Zero
-            return false;
+                errFalg = true;
+                errStr = "Ошибка: максимальная скорость равна 0";
+                // param is Zero
+                return false;
             }
-            if ( _maxInterval == 0 )
+
+            if (_minInterval == 0)
             {
-            // param is Zero
-            return false;
+                errFalg = true;
+                errStr = "Ошибка: минимальный интеравал равен 0";
+                // param is Zero
+                return false;
             }
-            if ( _valueReducingSpeed == 0 )
+
+            if (_maxInterval == 0)
             {
-            // param is Zero
-            return false;
+                errFalg = true;
+                errStr = "Ошибка: максимальный интеравал равен 0";
+                // param is Zero
+                return false;
             }
-            if ( _timeReducingSpeed == 0 )
+
+            if (_valueReducingSpeed == 0)
             {
-            // param is Zero
-            return false ;
+                errFalg = true;
+                errStr = "Ошибка: величина уменьшения скорости равна 0";
+                // param is Zero
+                return false;
             }
-            GameManager.instance.minSpeed =_minSpeed;
-            GameManager.instance.maxSpeed =_maxSpeed;
-            GameManager.instance.minInterval =_minInterval;
-            GameManager.instance.maxInterval =_maxInterval;
-            GameManager.instance.valueReducingSpeed =_valueReducingSpeed;
-            GameManager.instance.timeReducingSpeed =_timeReducingSpeed;
+
+            if (_timeReducingSpeed == 0)
+            {
+                errFalg = true;
+                errStr = "Ошибка: период уменьшения скорости равен 0";
+                // param is Zero
+                return false;
+            }
+
+            GameManager.instance.minSpeed = _minSpeed;
+            GameManager.instance.maxSpeed = _maxSpeed;
+            GameManager.instance.minInterval = _minInterval;
+            GameManager.instance.maxInterval = _maxInterval;
+            GameManager.instance.valueReducingSpeed = _valueReducingSpeed * GameManager.instance.coef;
+            GameManager.instance.timeReducingSpeed = _timeReducingSpeed;
             return true;
         }
         else
         {
-            Debug.Log("Empty");
+            //Debug.Log("Empty");
+            errFalg = true;
+            errStr = "Ошибка: Пустое поле";
             return false;
             //todo input filed is empty
         }
-        
+    }
+    
+    public void pressOkError()
+    {
+        if (errFalg == true)
+        {
+            errFalg = false;
+        }
     }
 }
