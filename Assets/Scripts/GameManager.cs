@@ -83,7 +83,6 @@ public class GameManager : MonoBehaviour
     {
         GameObject road = Instantiate(toInstantiateRoad, new Vector3(0f, 0f, 0f), Quaternion.identity);
         road.GetComponent<Road>().RoadInit(roadList.Count, new Vector3(0, 0, 0), 1);
-        //road.transform.localScale = new Vector3(ScreenAdjust,2,1);
         road.SetActive(true);
         roadList.Add(road);
     }

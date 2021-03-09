@@ -41,6 +41,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetDefaultValues();
     }
 
     // Update is called once per frame
@@ -194,5 +195,15 @@ public class UIManager : MonoBehaviour
         {
             errFalg = false;
         }
+    }
+
+    public void SetDefaultValues()
+    {
+        MinSpeed.text = "10";
+        MaxSpeed.text = "15";
+        MinInterval.text = "1";
+        MaxInterval.text = "5";
+        deltaVReduce.text = "5";
+        deltaTReduce.text = "2";
     }
 }

@@ -214,7 +214,7 @@ public class Car : MonoBehaviour
                          (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed()) && !IsAccidentHappened() &&
                          !IsInDelay())
                 {
-                    SetColor(Color.black);
+                    SetColor(Color.cyan);
                 }
                 else if (GetCurrentSpeed() + GetAcceleration() * dt < GetCurrentSpeed())
                 {
