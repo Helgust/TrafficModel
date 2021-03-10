@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using JetBrains.Annotations;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 public class Car : MonoBehaviour
@@ -21,7 +15,7 @@ public class Car : MonoBehaviour
     private float _timeInAccident;
     private float _actualTimeReducingSpeed;
     public Text carText;
-    public bool clicked;
+    private bool clicked;
     private Color _color;
 
     private RaycastHit2D _hit;
@@ -46,13 +40,13 @@ public class Car : MonoBehaviour
         SetActualTimeReducingSpeed(0);
     }
 
-    public void Start()
+    private void Start()
     {
         count = 0;
         gameObject.GetComponentInChildren<Canvas>().sortingOrder = 5;
     }
 
-    public void FixedUpdate()
+    private void FixedUpdate()
     {
         //Length of the ray
         float laserLength = Mathf.Infinity;
@@ -65,7 +59,7 @@ public class Car : MonoBehaviour
 
     }
 
-    public void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         Debug.Log("Crash");
         gameObject.transform.position = gameObject.transform.position + Vector3.right * 0.002f;
@@ -74,7 +68,7 @@ public class Car : MonoBehaviour
         SetAccidentHappened(true);
     }
     
-    public void OnMouseDown()
+    private void OnMouseDown()
     {
         if (!IsClicked())
         {
@@ -95,7 +89,7 @@ public class Car : MonoBehaviour
         }
     }
 
-    public void OnMouseUp()
+    private void OnMouseUp()
     {
         if (IsClicked())
         {
@@ -103,7 +97,7 @@ public class Car : MonoBehaviour
         }
     }
 
-    public void Update()
+    private void Update()
     {
         if (!GameManager.instance.isPause)
         {
@@ -190,7 +184,8 @@ public class Car : MonoBehaviour
 
     private void Move(float dt)
     {
-        if (GetCurrentSpeed() + GetAcceleration() * dt >= 0)
+        float currentSpeed = GetCurrentSpeed() + GetAcceleration() * dt;
+        if (currentSpeed >= 0)
         {
             if (IsAccidentHappened() && IsInDelay())
             {
@@ -206,27 +201,27 @@ public class Car : MonoBehaviour
             }
             else
             {
-                if (GetCurrentSpeed() + GetAcceleration() * dt > GetCurrentSpeed())
+                if (currentSpeed > GetCurrentSpeed())
                 {
                     SetColor(Color.magenta);
                 }
                 else if ((GetCurrentSpeed() == 0) &&
-                         (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed()) && !IsAccidentHappened() &&
+                         (currentSpeed == GetCurrentSpeed()) && !IsAccidentHappened() &&
                          !IsInDelay())
                 {
                     SetColor(Color.cyan);
                 }
-                else if (GetCurrentSpeed() + GetAcceleration() * dt < GetCurrentSpeed())
+                else if (currentSpeed < GetCurrentSpeed())
                 {
                     SetColor(Color.blue);
                 }
-                else if (GetCurrentSpeed() + GetAcceleration() * dt == GetCurrentSpeed())
+                else if (currentSpeed == GetCurrentSpeed())
                 {
                     SetColor(Color.green);
                 }
             }
 
-            SetCurrentSpeed(GetCurrentSpeed() + GetAcceleration() * dt);
+            SetCurrentSpeed(currentSpeed);
         }
         else
         {
@@ -244,7 +239,7 @@ public class Car : MonoBehaviour
         o.transform.position = o.transform.position + Vector3.right * speed;
     }
 
-    public void ReduceSpeed(float acceleration ,float dt)
+    private void ReduceSpeed(float acceleration ,float dt)
     {
         //sets the acceleration according to the front car speed in case of braking
         if (GetCurrentSpeed() > 0)
@@ -258,7 +253,7 @@ public class Car : MonoBehaviour
         }
     }
 
-    public void IncreaseSpeed(float acceleration, float dt)
+    private void IncreaseSpeed(float acceleration, float dt)
     {
         //sets the acceleration according to the car initial speed in case of acceleration
         if (GetCurrentSpeed() + acceleration * dt < GetInitialSpeed())
@@ -274,7 +269,7 @@ public class Car : MonoBehaviour
 
     //getters and setters
 
-    public int GetId()
+    private int GetId()
     {
         return _id;
     }
@@ -295,7 +290,7 @@ public class Car : MonoBehaviour
         gameObject.transform.position = coord;
     }
 
-    public float GetLength()
+    private float GetLength()
     {
         return _length;
     }
@@ -323,7 +318,7 @@ public class Car : MonoBehaviour
         carText.fontSize = (int)height -4;
     }
 
-    public float GetInitialSpeed()
+    private float GetInitialSpeed()
     {
         return _initialSpeed;
     }
@@ -333,63 +328,63 @@ public class Car : MonoBehaviour
         this._initialSpeed = initialSpeed*GameManager.instance.coef;
     }
 
-    public float GetCurrentSpeed()
+    private float GetCurrentSpeed()
     {
         return _currentSpeed;
     }
 
-    public void SetCurrentSpeed(float currentSpeed)
+    private void SetCurrentSpeed(float currentSpeed)
     {
         this._currentSpeed = currentSpeed;
     }
 
-    public float GetAcceleration()
+    private float GetAcceleration()
     {
         return _acceleration;
     }
 
-    public void SetAcceleration(float acceleration)
+    private void SetAcceleration(float acceleration)
     {
         this._acceleration = acceleration;
     }
 
-    public bool IsAccidentHappened()
+    private bool IsAccidentHappened()
     {
         return _accidentHappened;
     }
 
-    public void SetAccidentHappened(bool accidentHappened)
+    private void SetAccidentHappened(bool accidentHappened)
     {
         this._accidentHappened = accidentHappened;
     }
 
-    public bool IsInDelay()
+    private bool IsInDelay()
     {
         return _inDelay;
     }
 
-    public void SetInDelay(bool inDelay)
+    private void SetInDelay(bool inDelay)
     {
         this._inDelay = inDelay;
     }
 
 
-    public float GetTimeInAccident()
+    private float GetTimeInAccident()
     {
         return _timeInAccident;
     }
 
-    public void SetTimeInAccident(float timeInAccident)
+    private void SetTimeInAccident(float timeInAccident)
     {
         this._timeInAccident = timeInAccident;
     }
 
-    public float GetActualTimeReducingSpeed()
+    private float GetActualTimeReducingSpeed()
     {
         return _actualTimeReducingSpeed;
     }
 
-    public void SetActualTimeReducingSpeed(float actualTimeReducingSpeed)
+    private void SetActualTimeReducingSpeed(float actualTimeReducingSpeed)
     {
         this._actualTimeReducingSpeed = actualTimeReducingSpeed;
     }

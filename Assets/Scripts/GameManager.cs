@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void preesExit()
+    public void PreesExit()
     {
         if (roadList.Count != 0)
         {

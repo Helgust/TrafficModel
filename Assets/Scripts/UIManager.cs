@@ -39,13 +39,13 @@ public class UIManager : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         SetDefaultValues();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (errFalg)
         {
@@ -189,7 +189,7 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    public void pressOkError()
+    public void PressOkError()
     {
         if (errFalg == true)
         {

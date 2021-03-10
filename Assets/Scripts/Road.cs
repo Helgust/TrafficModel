@@ -29,7 +29,7 @@ public class Road : MonoBehaviour
         
     }
 
-    public void GenerateLane()
+    private void GenerateLane()
     {
         GameObject lane = Instantiate(GameManager.instance.toInstantiateLane, new Vector3(0, 0, 0f), Quaternion.identity);
         lane.GetComponent<Lane>().LaneInit(GameManager.instance.laneList.Count, new Vector3(0f,0f));

@@ -2208,7 +2208,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1412895327}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: pressOkError
+        m_MethodName: PressOkError
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4234,7 +4234,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 935044372}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: preesExit
+        m_MethodName: PreesExit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

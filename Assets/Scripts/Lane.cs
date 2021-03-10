@@ -10,8 +10,8 @@ public class Lane : MonoBehaviour
     private Vector3 _initCoord;
     public List<GameObject> carList = new List<GameObject>();
     
-    public bool timerReached;
-    public float intervalTimer;
+    private bool timerReached;
+    private float intervalTimer;
     
     // Start is called before the first frame update
     void Start()
@@ -91,7 +91,6 @@ public class Lane : MonoBehaviour
         }
         if (timerReached && carList[carList.Count-1].transform.position.x > GameManager.instance.lengthCar)
        {
-           //Debug.Log("CreateCar");
            CreateCar();
        }
        
