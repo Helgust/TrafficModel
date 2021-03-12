@@ -55,8 +55,6 @@ public class Car : MonoBehaviour
         _hit = Physics2D.Raycast(gameObject.transform.position, //+ new Vector3(_length / 2f, 0, 0),
             Vector2.right,
             laserLength);
-
-
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -67,7 +65,7 @@ public class Car : MonoBehaviour
         SetCurrentSpeed(0);
         SetAccidentHappened(true);
     }
-    
+
     private void OnMouseDown()
     {
         if (!IsClicked())
@@ -105,7 +103,8 @@ public class Car : MonoBehaviour
             {
                 Debug.Log("Dist" + _hit.distance);
             }
-            carText.text = Math.Round(GetCurrentSpeed()/10).ToString(CultureInfo.InvariantCulture);
+
+            carText.text = Math.Round(GetCurrentSpeed() / 10).ToString(CultureInfo.InvariantCulture);
             UpdateSpeeds(Time.deltaTime);
             Check();
             Move(Time.deltaTime);
@@ -158,17 +157,16 @@ public class Car : MonoBehaviour
             {
                 if (_hit.distance <= 3 * carNext.GetLength())
                 {
-                    ReduceSpeed(-10*GameManager.instance.coef,Time.deltaTime);
+                    ReduceSpeed(-10 * GameManager.instance.coef, Time.deltaTime);
                     return;
                 }
-                
             }
 
             if (!carNext.IsAccidentHappened())
             {
                 if (GetCurrentSpeed() < GetInitialSpeed())
                 {
-                    IncreaseSpeed(10*GameManager.instance.coef, dt);
+                    IncreaseSpeed(10 * GameManager.instance.coef, dt);
                 }
             }
         }
@@ -177,7 +175,7 @@ public class Car : MonoBehaviour
         {
             if (GetCurrentSpeed() < GetInitialSpeed())
             {
-                IncreaseSpeed(10*GameManager.instance.coef, dt);
+                IncreaseSpeed(10 * GameManager.instance.coef, dt);
             }
         }
     }
@@ -239,7 +237,7 @@ public class Car : MonoBehaviour
         o.transform.position = o.transform.position + Vector3.right * speed;
     }
 
-    private void ReduceSpeed(float acceleration ,float dt)
+    private void ReduceSpeed(float acceleration, float dt)
     {
         //sets the acceleration according to the front car speed in case of braking
         if (GetCurrentSpeed() > 0)
@@ -269,12 +267,12 @@ public class Car : MonoBehaviour
 
     //getters and setters
 
-    private int GetId()
+    public int GetId()
     {
         return _id;
     }
 
-    private void SetId(int id)
+    public void SetId(int id)
     {
         this._id = id;
     }
@@ -284,18 +282,18 @@ public class Car : MonoBehaviour
         return _initCoord;
     }
 
-    private void SetCoord(Vector3 coord)
+    public void SetCoord(Vector3 coord)
     {
         this._initCoord = coord;
         gameObject.transform.position = coord;
     }
 
-    private float GetLength()
+    public float GetLength()
     {
         return _length;
     }
 
-    private void SetLength(float length)
+    public void SetLength(float length)
     {
         this._length = length;
         gameObject.GetComponent<SpriteRenderer>().size =
@@ -309,92 +307,92 @@ public class Car : MonoBehaviour
         return _height;
     }
 
-    private void SetHeight(float height)
+    public void SetHeight(float height)
     {
         gameObject.GetComponent<SpriteRenderer>().size =
             new Vector2(gameObject.GetComponent<SpriteRenderer>().size.x, height);
         gameObject.GetComponent<BoxCollider2D>().size =
             new Vector2(gameObject.GetComponent<BoxCollider2D>().size.x, height);
-        carText.fontSize = (int)height -4;
+        carText.fontSize = (int) height - 4;
     }
 
-    private float GetInitialSpeed()
+    public float GetInitialSpeed()
     {
         return _initialSpeed;
     }
 
-    private void SetInitialSpeed(float initialSpeed)
+    public void SetInitialSpeed(float initialSpeed)
     {
-        this._initialSpeed = initialSpeed*GameManager.instance.coef;
+        this._initialSpeed = initialSpeed * GameManager.instance.coef;
     }
 
-    private float GetCurrentSpeed()
+    public float GetCurrentSpeed()
     {
         return _currentSpeed;
     }
 
-    private void SetCurrentSpeed(float currentSpeed)
+    public void SetCurrentSpeed(float currentSpeed)
     {
         this._currentSpeed = currentSpeed;
     }
 
-    private float GetAcceleration()
+    public float GetAcceleration()
     {
         return _acceleration;
     }
 
-    private void SetAcceleration(float acceleration)
+    public void SetAcceleration(float acceleration)
     {
         this._acceleration = acceleration;
     }
 
-    private bool IsAccidentHappened()
+    public bool IsAccidentHappened()
     {
         return _accidentHappened;
     }
 
-    private void SetAccidentHappened(bool accidentHappened)
+    public void SetAccidentHappened(bool accidentHappened)
     {
         this._accidentHappened = accidentHappened;
     }
 
-    private bool IsInDelay()
+    public bool IsInDelay()
     {
         return _inDelay;
     }
 
-    private void SetInDelay(bool inDelay)
+    public void SetInDelay(bool inDelay)
     {
         this._inDelay = inDelay;
     }
 
 
-    private float GetTimeInAccident()
+    public float GetTimeInAccident()
     {
         return _timeInAccident;
     }
 
-    private void SetTimeInAccident(float timeInAccident)
+    public void SetTimeInAccident(float timeInAccident)
     {
         this._timeInAccident = timeInAccident;
     }
 
-    private float GetActualTimeReducingSpeed()
+    public float GetActualTimeReducingSpeed()
     {
         return _actualTimeReducingSpeed;
     }
 
-    private void SetActualTimeReducingSpeed(float actualTimeReducingSpeed)
+    public void SetActualTimeReducingSpeed(float actualTimeReducingSpeed)
     {
         this._actualTimeReducingSpeed = actualTimeReducingSpeed;
     }
 
-    private bool IsClicked()
+    public bool IsClicked()
     {
         return clicked;
     }
 
-    private void SetClicked(bool clicked)
+    public void SetClicked(bool clicked)
     {
         this.clicked = clicked;
     }
@@ -405,7 +403,7 @@ public class Car : MonoBehaviour
         return _color;
     }
 
-    private void SetColor(Color new_color)
+    public void SetColor(Color new_color)
     {
         _color = new_color;
         gameObject.GetComponent<SpriteRenderer>().color = new_color;

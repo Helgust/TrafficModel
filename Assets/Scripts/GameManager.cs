@@ -10,8 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     //private List<Car> carList = new List<Car>();
-    public List<GameObject> roadList = new List<GameObject>();
-    public List<GameObject> laneList = new List<GameObject>();
+    private List<GameObject> roadList = new List<GameObject>();
 
     public GameObject toInstantiateRoad;
     public GameObject toInstantiateLane;
@@ -26,8 +25,7 @@ public class GameManager : MonoBehaviour
 
     private int roadCounter;
     private int laneCounter;
-
-
+    
     public int coef = 10;
     public bool isStart;
     public bool isPause;
@@ -56,12 +54,11 @@ public class GameManager : MonoBehaviour
         //toInstantiate = GameObject.Find("CarTemp");
     }
 
-    void Start()
+    private void Start()
     {
         counter = 0;
         isStart = false;
         isPause = false;
-        Debug.Log("Screen" + Screen.currentResolution);
         minSpeed = 4;
         maxSpeed = 5;
         minInterval = 1;
@@ -74,10 +71,6 @@ public class GameManager : MonoBehaviour
         heightCar = 20;
     }
 
-    private void Begin()
-    {
-        GenerateRoad();
-    }
 
     private void GenerateRoad()
     {
@@ -89,22 +82,22 @@ public class GameManager : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (isStart)
         {
             counter++;
             if (counter <= roadCounter)
             {
-                Begin();
+                GenerateRoad();
             }
         }
         else
         {
             counter = 0;
-            foreach (var R in roadList)
+            foreach (var r in roadList)
             {
-                Destroy(R);
+                Destroy(r);
             }
         }
     }

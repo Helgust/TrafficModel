@@ -1645,8 +1645,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d46148603feec04d8c5d2e776eabb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roadList: []
-  laneList: []
   toInstantiateRoad: {fileID: 5699620469610642882, guid: 56c85561e28bd7f4eb0424fed330f306, type: 3}
   toInstantiateLane: {fileID: 2142170971547979165, guid: 1bfcc3dbba3342646ae4ef24767524c7, type: 3}
   toInstantiateCar: {fileID: 4615606921991892211, guid: 90ec094fcd9a7f747b3b0e77ea67e32c, type: 3}

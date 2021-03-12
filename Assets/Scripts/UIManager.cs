@@ -188,7 +188,7 @@ public class UIManager : MonoBehaviour
             //todo input filed is empty
         }
     }
-    
+
     public void PressOkError()
     {
         if (errFalg == true)
