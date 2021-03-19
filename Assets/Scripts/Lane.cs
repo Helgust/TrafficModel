@@ -2,48 +2,209 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class Lane : MonoBehaviour
+public class Lane
 {
     private int _id;
-    private Vector3 _initCoord;
-    private List<GameObject> carList = new List<GameObject>();
-
-    private bool timerReached;
-    private float intervalTimer;
+    private Vector3 _pos;
+    private List<Car> carList = new List<Car>();
+    private float _brakeLow = -1;
 
     // Start is called before the first frame update
     private void Start()
     {
-        timerReached = false;
-        intervalTimer = GameManager.getRnd.Next(GameManager.instance.minInterval, GameManager.instance.maxInterval);
+    }
+
+    public Lane(int id, Vector3 pos)
+    {
+        SetId(id);
+        SetPos(pos);
     }
 
 
-    // Update is called once per frame
-    private void Update()
+    public Car GetCar(int i)
     {
-        CheckCar();
-        if (!timerReached)
+        return carList[i];
+    }
+
+    public void deleteList()
+    {
+        carList.Clear();
+    }
+
+    public void DoStuff()
+    {
+        if (carList.Count != 0)
         {
-            if (intervalTimer > 0)
+            for (int i = 0; i < carList.Count; i++)
             {
-                intervalTimer -= Time.deltaTime;
+                Car currentCar = GetCar(i);
+                updateSpeeds(i - 1, i, Time.deltaTime);
+                currentCar.Check(GameManager.instance.valueReducingSpeed, GameManager.instance.timeReducingSpeed);
+                currentCar.Move(Time.deltaTime);
+                DrawController.instance.DrawCar(currentCar);
+                currentCar.SetDrawed(true);
+                
+                if (currentCar.IsAccidentHappened())
+                {
+                    if (currentCar.GetCurrentSpeed() == 0)
+                        currentCar.SetAcceleration(0);
+                    if (Math.Floor(currentCar.GetTimeInAccident()) >= GameManager.instance.timeReducingSpeed)
+                    {
+                        if ((i == 0) || (i > 0 &&
+                                         (GetCar(i - 1).GetPos().x - currentCar.GetPos().x - currentCar.GetLength() >
+                                          3 * currentCar.GetLength())))
+                        {
+                            currentCar.SetAccidentHappened(false);
+                            currentCar.SetTimeInAccident(0);
+                        }
+                    }
+
+                    currentCar.SetTimeInAccident(currentCar.GetTimeInAccident() + Time.deltaTime);
+                }
+                if (currentCar.IsInDelay()) {
+                    if (currentCar.GetActualTimeReducingSpeed() <= 0) {
+                        currentCar.SetActualTimeReducingSpeed(0);
+                        currentCar.SetInDelay(false);
+                    }
+                    currentCar.SetActualTimeReducingSpeed(currentCar.GetActualTimeReducingSpeed() - Time.deltaTime*10);
+                }
+            }
+        }
+
+        CheckCar();
+        if (!GameManager.instance.timerReached)
+        {
+            if (GameManager.instance.intervalTimer > 0)
+            {
+                GameManager.instance.intervalTimer -= Time.deltaTime;
             }
             else
             {
-                intervalTimer = 0;
-                timerReached = true;
+                GameManager.instance.intervalTimer = 0;
+                GameManager.instance.timerReached = true;
             }
         }
         else
         {
-            intervalTimer = GameManager.getRnd.Next(GameManager.instance.minInterval, GameManager.instance.maxInterval);
-            timerReached = false;
+            GameManager.instance.intervalTimer =
+                GameManager.getRnd.Next(GameManager.instance.minInterval, GameManager.instance.maxInterval);
+            GameManager.instance.timerReached = false;
         }
     }
-    
+
+
+    // private void UpdateSpeeds(int id,float dt)
+    // {
+    //     if (!IsAccidentHappened() && !IsInDelay())
+    //     {
+    //         if (GetCurrentSpeed() < GetInitialSpeed())
+    //         {
+    //             IncreaseSpeed(10 * GameManager.instance.coef, dt);
+    //         }
+    //     }
+    // }
+    //
+    public void updateSpeeds(int carFrontNumber, int carNextNumber, float dt)
+    {
+        Car carNext = GetCar(carNextNumber);
+        if (carNextNumber != 0)
+        {
+            Car carFront = GetCar(carFrontNumber);
+            float dist = carFront.GetPos().x + carFront.GetLength() / 2 - carNext.GetPos().x - carNext.GetLength() / 2;
+            if (!carNext.IsAccidentHappened() && !carNext.IsInDelay())
+            {
+                if (dist <= 3 * carNext.GetLength() && dist > carNext.GetLength())
+                {
+                    carNext.ReduceSpeed(-10*GameManager.instance.coef, dt);
+                    return;
+                }
+            }
+
+            if (carNext.GetCurrentSpeed() > 0)
+            {
+                if (dist <= carNext.GetLength())
+                {
+                    isAccident(carFrontNumber, carNextNumber);
+                    return;
+                }
+            }
+        }
+
+        if (!carNext.IsAccidentHappened() && !carNext.IsInDelay())
+        {
+            if (carNext.GetCurrentSpeed() < carNext.GetInitialSpeed())
+            {
+                //float acl = _brakeLow * (-1);
+                carNext.IncreaseSpeed(10*GameManager.instance.coef, dt);
+            }
+        }
+    }
+
+    //"isAccident" changes the speeds and accelerations of cars in case of accident
+    private void isAccident(int carFrontN, int carNextN)
+    {
+        Car carFront = GetCar(carFrontN);
+        Car carNext = GetCar(carNextN);
+        float avSpeed = carNext.GetCurrentSpeed();
+        int next = carNextN, front = carFrontN;
+        int carsInAccident = 1;
+        carNext.SetAccidentHappened(true);
+        carFront.SetAccidentHappened(true);
+        while (front >= 0 && carFront.IsAccidentHappened() &&
+               (carFront.GetPos().x + carFront.GetLength() / 2 - carNext.GetPos().x - carNext.GetLength() / 2 <=
+                carNext.GetLength()))
+        {
+            avSpeed += carFront.GetCurrentSpeed();
+            next--;
+            front--;
+            carsInAccident++;
+            carNext = GetCar(next);
+            if (front >= 0)
+                carFront = GetCar(front);
+        }
+
+        avSpeed /= carsInAccident;
+        next = carNextN;
+        front = carFrontN;
+        carNext = GetCar(next);
+        carFront = GetCar(front);
+        carNext.SetCurrentSpeed(avSpeed);
+        carNext.SetAcceleration(_brakeLow);
+        while (front >= 0 && carFront.IsAccidentHappened() &&
+               (carFront.GetPos().x + carFront.GetLength() / 2 - carNext.GetPos().x - carNext.GetLength() / 2 <=
+                carNext.GetLength()))
+        {
+            carFront.SetCurrentSpeed(avSpeed);
+            carFront.SetAcceleration(_brakeLow);
+            next--;
+            front--;
+            carNext = GetCar(next);
+            if (front >= 0)
+                carFront = GetCar(front);
+        }
+    }
+
+    public void CreateCar()
+    {
+        carList.Add(new Car(carList.Count, GameManager.instance.lengthCar, GameManager.instance.heightCar,
+            new Vector3(-3f, 0f, 0f),
+            GameManager.getRnd.Next(GameManager.instance.minSpeed, GameManager.instance.maxSpeed)));
+    }
+
+    public void CheckCar()
+    {
+        if (carList.Count == 0)
+        {
+            CreateCar();
+        }
+
+        if (GameManager.instance.timerReached && carList[carList.Count - 1].GetPos().x > GameManager.instance.lengthCar)
+        {
+            CreateCar();
+        }
+    }
+
 
     public void SetId(int id)
     {
@@ -55,45 +216,13 @@ public class Lane : MonoBehaviour
         this._id = id;
     }
 
-    public Vector3 GetCoord()
+    public Vector3 GetPos()
     {
-        return _initCoord;
+        return _pos;
     }
 
-    public void SetCoord(Vector3 coord)
+    public void SetPos(Vector3 pos)
     {
-        this._initCoord = coord;
-        gameObject.GetComponent<SpriteRenderer>().size = new Vector2(Screen.width * 2f, 60f);
-    }
-
-    public void LaneInit(int id, Vector3 initCoord)
-    {
-        SetId(id);
-        SetCoord(initCoord);
-    }
-
-    public void CreateCar()
-    {
-        GameObject car = Instantiate(GameManager.instance.toInstantiateCar, new Vector3(-100f, 0f, 0f),
-            Quaternion.identity);
-        car.GetComponent<Car>().CarInit(carList.Count, GameManager.instance.lengthCar, GameManager.instance.heightCar,
-            new Vector3(-3f, 0f, 0f),
-            GameManager.getRnd.Next(GameManager.instance.minSpeed, GameManager.instance.maxSpeed));
-        car.transform.SetParent(gameObject.transform);
-        car.SetActive(true);
-        carList.Add(car);
-    }
-
-    public void CheckCar()
-    {
-        if (carList.Count == 0)
-        {
-            CreateCar();
-        }
-
-        if (timerReached && carList[carList.Count - 1].transform.position.x > GameManager.instance.lengthCar)
-        {
-            CreateCar();
-        }
+        this._pos = pos;
     }
 }

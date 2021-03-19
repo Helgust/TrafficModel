@@ -1626,6 +1626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 935044373}
   - component: {fileID: 935044372}
+  - component: {fileID: 935044374}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1645,9 +1646,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d46148603feec04d8c5d2e776eabb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toInstantiateRoad: {fileID: 5699620469610642882, guid: 56c85561e28bd7f4eb0424fed330f306, type: 3}
-  toInstantiateLane: {fileID: 2142170971547979165, guid: 1bfcc3dbba3342646ae4ef24767524c7, type: 3}
-  toInstantiateCar: {fileID: 4615606921991892211, guid: 90ec094fcd9a7f747b3b0e77ea67e32c, type: 3}
   minSpeed: 0
   maxSpeed: 0
   minInterval: 0
@@ -1660,6 +1658,8 @@ MonoBehaviour:
   lengthCar: 40
   heightCar: 40
   counter: 0
+  timerReached: 0
+  intervalTimer: 0
 --- !u!4 &935044373
 Transform:
   m_ObjectHideFlags: 0
@@ -1674,6 +1674,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &935044374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935044371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38b02149e1f0a6347852872c40ab4ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toInstantiateRoad: {fileID: 5699620469610642882, guid: 56c85561e28bd7f4eb0424fed330f306, type: 3}
+  toInstantiateLane: {fileID: 2142170971547979165, guid: 1bfcc3dbba3342646ae4ef24767524c7, type: 3}
+  toInstantiateCar: {fileID: 4615606921991892211, guid: 90ec094fcd9a7f747b3b0e77ea67e32c, type: 3}
+  mousePressed: 0
+  mousePoint: {x: 0, y: 0, z: 0}
 --- !u!1 &982449596
 GameObject:
   m_ObjectHideFlags: 0

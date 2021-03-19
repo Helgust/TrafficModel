@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.U2D.Path;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,18 +11,14 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     //private List<Car> carList = new List<Car>();
-    private List<GameObject> roadList = new List<GameObject>();
-
-    public GameObject toInstantiateRoad;
-    public GameObject toInstantiateLane;
-    public GameObject toInstantiateCar;
-
+    private List<Road> roadList = new List<Road>();
+    
     public int minSpeed;
     public int maxSpeed;
     public int minInterval;
     public int maxInterval;
-    public int valueReducingSpeed;
-    public int timeReducingSpeed;
+    public float valueReducingSpeed;
+    public float timeReducingSpeed;
 
     private int roadCounter;
     private int laneCounter;
@@ -32,6 +29,9 @@ public class GameManager : MonoBehaviour
     public float lengthCar;
     public float heightCar;
     public int counter;
+
+    public bool timerReached; 
+    public float intervalTimer;
 
     public static System.Random getRnd = new System.Random();
     // Start is called before the first frame update
@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-        //toInstantiate = GameObject.Find("CarTemp");
     }
 
     private void Start()
@@ -65,52 +64,83 @@ public class GameManager : MonoBehaviour
         maxInterval = 5;
         roadCounter = 1;
         laneCounter = 1;
-        valueReducingSpeed = 1;
-        timeReducingSpeed = 5;
+        valueReducingSpeed = 1f;
+        timeReducingSpeed = 5f;
         lengthCar = 40;
         heightCar = 20;
+        timerReached = false;
+        intervalTimer = GameManager.getRnd.Next(GameManager.instance.minInterval, GameManager.instance.maxInterval);
     }
 
 
     private void GenerateRoad()
     {
-        GameObject road = Instantiate(toInstantiateRoad, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        road.GetComponent<Road>().RoadInit(roadList.Count, new Vector3(0, 0, 0), 1);
-        road.SetActive(true);
-        roadList.Add(road);
+        roadList.Add(new Road(roadList.Count, new Vector3(0, 0, 0), 1));
     }
-
+    
 
     // Update is called once per frame
     private void Update()
     {
+        
         if (isStart)
         {
             counter++;
             if (counter <= roadCounter)
             {
                 GenerateRoad();
+                for (int i = 0; i < roadList.Count; i++)
+                {
+                    Debug.Log("roadList.Count= "+roadList[i].GetPos());
+                    DrawController.instance.DrawRoad(roadList[i]);
+                    if (roadList[i].GetList().Count < laneCounter)
+                    {
+                        roadList[i].GenerateLane();
+                    }
+                }
+            }
+
+            for (int i = 0; i < roadList.Count; i++)
+            {
+                roadList[i].DoStuff();
             }
         }
         else
         {
             counter = 0;
-            foreach (var r in roadList)
+            DrawController.instance.deleteAll();
+            if (roadList.Count != 0)
             {
-                Destroy(r);
+                foreach (var road in roadList)
+                {
+                    List<Lane>lanes =  road.GetList();
+                    foreach (var lane in lanes)
+                    {
+                        lane.deleteList();
+                    }
+                    lanes.Clear();
+                }
             }
+            roadList.Clear();
         }
     }
 
     public void PreesExit()
     {
+        DrawController.instance.deleteAll();
         if (roadList.Count != 0)
         {
-            foreach (var VARIABLE in roadList)
+            foreach (var road in roadList)
             {
-                Destroy(VARIABLE);
+                List<Lane>lanes =  road.GetList();
+                foreach (var lane in lanes)
+                {
+                    lane.deleteList();
+                }
+                lanes.Clear();
             }
         }
+        roadList.Clear();
 
         Application.Quit();
     }

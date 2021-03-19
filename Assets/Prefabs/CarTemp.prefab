@@ -109,10 +109,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4177070561107664819}
   - component: {fileID: 4615606921991892205}
-  - component: {fileID: 2999189229005383834}
-  - component: {fileID: 4615606921991892207}
-  - component: {fileID: 8557937747515560500}
   - component: {fileID: 5203223437046824183}
+  - component: {fileID: 7545479057962343754}
+  - component: {fileID: 667797221162358090}
   m_Layer: 0
   m_Name: CarTemp
   m_TagString: Car
@@ -191,21 +190,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2999189229005383834
-MonoBehaviour:
+--- !u!222 &5203223437046824183
+CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4615606921991892211}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bea01f2ce5b54548a0b21d68623f7cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carText: {fileID: 5974948142022897901}
-  clicked: 0
---- !u!61 &4615606921991892207
+  m_CullTransparentMesh: 0
+--- !u!61 &7545479057962343754
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -231,35 +224,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!50 &8557937747515560500
-Rigidbody2D:
-  serializedVersion: 4
+--- !u!114 &667797221162358090
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4615606921991892211}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 1
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!222 &5203223437046824183
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4615606921991892211}
-  m_CullTransparentMesh: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826231d0b7399ae408b76515416e4ddd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carText: {fileID: 5974948142022897901}
 --- !u!1 &7445333316932696265
 GameObject:
   m_ObjectHideFlags: 0
