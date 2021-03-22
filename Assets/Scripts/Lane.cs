@@ -105,7 +105,7 @@ public class Lane
     //     }
     // }
     //
-    public void updateSpeeds(int carFrontNumber, int carNextNumber, float dt)
+    private void updateSpeeds(int carFrontNumber, int carNextNumber, float dt)
     {
         Car carNext = GetCar(carNextNumber);
         if (carNextNumber != 0)
@@ -182,14 +182,14 @@ public class Lane
         }
     }
 
-    public void CreateCar()
+    private void CreateCar()
     {
         carList.Add(new Car(carList.Count, GameManager.instance.lengthCar, GameManager.instance.heightCar,
             new Vector3(-3f, 0f, 0f),
             GameManager.getRnd.Next(GameManager.instance.minSpeed, GameManager.instance.maxSpeed)));
     }
 
-    public void CheckCar()
+    private void CheckCar()
     {
         if (carList.Count == 0)
         {

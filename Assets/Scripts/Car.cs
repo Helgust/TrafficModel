@@ -93,7 +93,7 @@ public class Car
             ShiftCarForward(Time.deltaTime);
     }
 
-    private void ShiftCarForward(float dt)
+        private void ShiftCarForward(float dt)
     {
         var speed = (GetCurrentSpeed() * dt + GetAcceleration() * dt * dt / 2);
         this.SetPos(GetPos() + Vector3.right * speed);
