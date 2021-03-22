@@ -17,11 +17,11 @@ public class Road
         SetPos(initPos);
         SetLaneCount(laneCount);
     }
-    
+
     public void GenerateLane()
     {
         _laneList.Add(new Lane(_laneList.Count, new Vector3(0f, 0f)));
-        DrawController.instance.DrawLane(_laneList[_laneList.Count-1]);
+        DrawController.instance.DrawLane(_laneList[_laneList.Count - 1]);
     }
 
 
@@ -32,11 +32,12 @@ public class Road
             _laneList[i].DoStuff();
         }
     }
+
     public List<Lane> GetList()
     {
         return _laneList;
     }
-    
+
     public void SetId(int id)
     {
         this._id = id;

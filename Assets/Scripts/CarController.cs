@@ -3,6 +3,7 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class CarController : MonoBehaviour
 {
     private int _id;
@@ -34,7 +35,6 @@ public class CarController : MonoBehaviour
     {
     }
 
-    
 
     //getters and setters
 
@@ -58,7 +58,7 @@ public class CarController : MonoBehaviour
         this._pos = coord;
         gameObject.transform.position = coord;
     }
-    
+
 
     public void SetLength(float length)
     {
@@ -67,7 +67,7 @@ public class CarController : MonoBehaviour
         gameObject.GetComponent<BoxCollider2D>().size =
             new Vector2(length, gameObject.GetComponent<BoxCollider2D>().size.y);
     }
-    
+
 
     public void SetHeight(float height)
     {
@@ -80,17 +80,16 @@ public class CarController : MonoBehaviour
 
     public Color GetColor()
     {
-        return  Color.magenta;
+        return Color.magenta;
     }
 
     public void SetColor(Color new_color)
     {
         gameObject.GetComponent<SpriteRenderer>().color = new_color;
     }
-    
+
     public void SetText(string newText)
     {
         carText.text = newText;
     }
-    
 }

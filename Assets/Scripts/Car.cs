@@ -131,8 +131,10 @@ public class Car
     {
         if (DrawController.instance.mousePressed && !IsClicked())
         {
-            if ((DrawController.instance.mousePoint.x <= GetPos().x + GetLength()/2f && DrawController.instance.mousePoint.x >= GetPos().x - GetHeight()/2f) &&
-                (DrawController.instance.mousePoint.y <= GetPos().y + GetHeight()/2f && DrawController.instance.mousePoint.y > GetPos().y - GetHeight()/2f))
+            if ((DrawController.instance.mousePoint.x <= GetPos().x + GetLength() / 2f &&
+                 DrawController.instance.mousePoint.x >= GetPos().x - GetHeight() / 2f) &&
+                (DrawController.instance.mousePoint.y <= GetPos().y + GetHeight() / 2f &&
+                 DrawController.instance.mousePoint.y > GetPos().y - GetHeight() / 2f))
             {
                 SetActualTimeReducingSpeed(GetActualTimeReducingSpeed() + timeReducingSpeed);
                 if (GetCurrentSpeed() - dspeed >= 0)

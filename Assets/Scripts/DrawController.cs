@@ -12,12 +12,13 @@ public class DrawController : MonoBehaviour
     public GameObject toInstantiateRoad;
     public GameObject toInstantiateLane;
     public GameObject toInstantiateCar;
-    
-    public  bool mousePressed;
+
+    public bool mousePressed;
     public Vector3 mousePoint;
     private List<GameObject> _gameObjects = new List<GameObject>();
     private List<GameObject> _carGameObjects = new List<GameObject>();
     private Camera cam;
+
     private void Awake()
     {
         if (instance == null)
@@ -41,17 +42,18 @@ public class DrawController : MonoBehaviour
         {
             Destroy(VARIABLE);
         }
+
         foreach (var VARIABLE in _carGameObjects)
         {
             Destroy(VARIABLE);
         }
+
         _carGameObjects.Clear();
         _gameObjects.Clear();
     }
-    
+
     void OnGUI()
     {
-        
         mousePoint = cam.ScreenToWorldPoint(new Vector3(Event.current.mousePosition.x,
             Event.current.mousePosition.y, cam.nearClipPlane));
     }
@@ -73,15 +75,12 @@ public class DrawController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             mousePressed = true;
-            
-
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             mousePressed = false;
         }
-        
     }
 
     public void DrawRoad(Road road)

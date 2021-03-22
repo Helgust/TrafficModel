@@ -10,11 +10,6 @@ public class Lane
     private List<Car> carList = new List<Car>();
     private float _brakeLow = -1;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
-
     public Lane(int id, Vector3 pos)
     {
         SetId(id);
@@ -44,7 +39,7 @@ public class Lane
                 currentCar.Move(Time.deltaTime);
                 DrawController.instance.DrawCar(currentCar);
                 currentCar.SetDrawed(true);
-                
+
                 if (currentCar.IsAccidentHappened())
                 {
                     if (currentCar.GetCurrentSpeed() == 0)
@@ -62,12 +57,17 @@ public class Lane
 
                     currentCar.SetTimeInAccident(currentCar.GetTimeInAccident() + Time.deltaTime);
                 }
-                if (currentCar.IsInDelay()) {
-                    if (currentCar.GetActualTimeReducingSpeed() <= 0) {
+
+                if (currentCar.IsInDelay())
+                {
+                    if (currentCar.GetActualTimeReducingSpeed() <= 0)
+                    {
                         currentCar.SetActualTimeReducingSpeed(0);
                         currentCar.SetInDelay(false);
                     }
-                    currentCar.SetActualTimeReducingSpeed(currentCar.GetActualTimeReducingSpeed() - Time.deltaTime*10);
+
+                    currentCar.SetActualTimeReducingSpeed(currentCar.GetActualTimeReducingSpeed() -
+                                                          Time.deltaTime * 10);
                 }
             }
         }
@@ -116,7 +116,7 @@ public class Lane
             {
                 if (dist <= 3 * carNext.GetLength() && dist > carNext.GetLength())
                 {
-                    carNext.ReduceSpeed(-10*GameManager.instance.coef, dt);
+                    carNext.ReduceSpeed(-10 * GameManager.instance.coef, dt);
                     return;
                 }
             }
@@ -136,7 +136,7 @@ public class Lane
             if (carNext.GetCurrentSpeed() < carNext.GetInitialSpeed())
             {
                 //float acl = _brakeLow * (-1);
-                carNext.IncreaseSpeed(10*GameManager.instance.coef, dt);
+                carNext.IncreaseSpeed(10 * GameManager.instance.coef, dt);
             }
         }
     }
@@ -146,7 +146,6 @@ public class Lane
     {
         Car carFront = GetCar(carFrontN);
         Car carNext = GetCar(carNextN);
-        float avSpeed = carNext.GetCurrentSpeed();
         int next = carNextN, front = carFrontN;
         int carsInAccident = 1;
         carNext.SetAccidentHappened(true);
@@ -155,7 +154,6 @@ public class Lane
                (carFront.GetPos().x + carFront.GetLength() / 2 - carNext.GetPos().x - carNext.GetLength() / 2 <=
                 carNext.GetLength()))
         {
-            avSpeed += carFront.GetCurrentSpeed();
             next--;
             front--;
             carsInAccident++;
@@ -164,19 +162,18 @@ public class Lane
                 carFront = GetCar(front);
         }
 
-        avSpeed /= carsInAccident;
         next = carNextN;
         front = carFrontN;
         carNext = GetCar(next);
         carFront = GetCar(front);
-        carNext.SetCurrentSpeed(avSpeed);
-        carNext.SetAcceleration(_brakeLow);
+        carNext.SetCurrentSpeed(0);
+        carNext.SetAcceleration(0);
         while (front >= 0 && carFront.IsAccidentHappened() &&
                (carFront.GetPos().x + carFront.GetLength() / 2 - carNext.GetPos().x - carNext.GetLength() / 2 <=
                 carNext.GetLength()))
         {
-            carFront.SetCurrentSpeed(avSpeed);
-            carFront.SetAcceleration(_brakeLow);
+            carFront.SetCurrentSpeed(0);
+            carFront.SetAcceleration(0);
             next--;
             front--;
             carNext = GetCar(next);
