@@ -180,6 +180,7 @@ public class Lane
             if (front >= 0)
                 carFront = GetCar(front);
         }
+        UIManager.instance.SetAccidentCount(UIManager.instance.GetAccidentCount() + 1);
     }
 
     private void CreateCar()

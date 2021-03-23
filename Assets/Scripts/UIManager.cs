@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     public GameObject errorWindow;
     public Text StartButtonText;
     public Text PauseButtonText;
+    public Text AccidentCountText;
     public InputField MinSpeed;
     public InputField MaxSpeed;
     public InputField MinInterval;
@@ -19,6 +20,7 @@ public class UIManager : MonoBehaviour
 
     private string errStr = String.Empty;
     private bool errFalg;
+    private int accidentCount;
 
     private void Awake()
     {
@@ -41,6 +43,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        accidentCount = 0;
         SetDefaultValues();
     }
 
@@ -57,6 +60,8 @@ public class UIManager : MonoBehaviour
             errorWindow.SetActive(false);
             errStr = String.Empty;
         }
+
+        AccidentCountText.text = accidentCount.ToString();
     }
 
     public void pressStart()
@@ -73,6 +78,7 @@ public class UIManager : MonoBehaviour
         {
             GameManager.instance.isStart = false;
             StartButtonText.text = "СТАРТ";
+            accidentCount = 0;
         }
     }
 
@@ -205,5 +211,15 @@ public class UIManager : MonoBehaviour
         MaxInterval.text = "5";
         deltaVReduce.text = "5";
         deltaTReduce.text = "2";
+    }
+
+    public int GetAccidentCount()
+    {
+        return accidentCount;
+    }
+    
+    public void SetAccidentCount(int value)
+    {
+        accidentCount = value;
     }
 }
